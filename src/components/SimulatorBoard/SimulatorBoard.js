@@ -13,30 +13,88 @@ class SimulatorBoard extends React.Component {
       },
     };
   }
+  componentDidMount() {
+    this.spawnTiles(this.spawningFreq);
+  }
 
-  generateTilesPlaceholders = () => {
+  spawningFreq = () =>
+    (Math.floor(Math.random() * Math.floor(3)) > 1.9) % 7 ? 1 : 0;
+
+  noSpawnCallback = () => 0;
+
+  spawnTiles = (getSpawningValue = () => 0, updateState = true) => {
     const { grid } = this.state;
-    let board = [];
+    let gridTiles = [];
     for (let i = 0; i < grid.rows; i++) {
-      board[i] = [];
+      gridTiles[i] = [];
       for (let j = 0; j < grid.cols; j++) {
-        board[i][j] = Math.floor(Math.random() * Math.floor(2)) % 2 ? 1 : 0;
+        gridTiles[i][j] = getSpawningValue();
       }
     }
-    return board;
+    if (updateState) {
+      this.setState(
+        { grid: { gridTiles: gridTiles, rows: 30, cols: 30 } },
+        this.runSimulation
+      );
+    } else {
+      return gridTiles;
+    }
+  };
+
+  getNeighbours = (gridTiles, x, y) => {
+    let neighbors = 0;
+    const neighborDirections = [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [-1, -1],
+    ];
+    for (let d = 0; d < neighborDirections.length; d++) {
+      let newX = neighborDirections[d][0];
+      let newY = neighborDirections[d][1];
+      if (newX > 0 && newY > 0 && gridTiles[newX][newY]) {
+        neighbors++;
+      }
+    }
+    if (neighbors) {
+      console.log(x, y, neighbors);
+    }
+    return neighbors;
+  };
+
+  runSimulation = () => {
+    let nextFrame = this.spawnTiles(this.noSpawnCallback, false);
+    const { grid } = this.state;
+    const { rows, cols, gridTiles } = grid;
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const neighbors = this.getNeighbours(gridTiles, i, j);
+        if (gridTiles[i][j]) {
+          if (neighbors === 2 || neighbors === 3) {
+            nextFrame[i][j] = 1;
+          } else {
+            nextFrame[i][j] = 0;
+          }
+        } else {
+          if (!gridTiles[i][j] && neighbors === 3) {
+            nextFrame[i][j] = 1;
+          }
+        }
+      }
+    }
   };
 
   render() {
+    const { grid } = this.state;
     return (
       <div className="simulator-board">
-        {this.generateTilesPlaceholders().map((row, rowIndex) =>
+        {grid.gridTiles.map((row, rowIndex) =>
           row.map((tile, colIndex) => {
-            console.log(tile);
             return tile ? (
               <Tile
                 size={20}
-                left={20 * rowIndex + 1}
-                top={20 * colIndex + 1}
+                top={20 * rowIndex + 1}
+                left={20 * colIndex + 1}
                 key={`${colIndex}${rowIndex}`}
               />
             ) : null;

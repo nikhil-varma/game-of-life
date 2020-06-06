@@ -1,8 +1,9 @@
 import React from "react";
+import SimulatorBoard from "./components/SimulatorBoard/SimulatorBoard";
 import "./App.css";
 
 function App() {
-  return <div>Hello</div>;
+  return <SimulatorBoard />;
 }
 
 export default App;

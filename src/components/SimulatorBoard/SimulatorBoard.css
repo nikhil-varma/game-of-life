@@ -1,0 +1,10 @@
+.simulator-board {
+  width: 600px;
+  height: 600px;
+  margin: 0 auto;
+  position: relative;
+  background-color: #000;
+  background-image: linear-gradient(#333 1px, transparent 1px),
+    linear-gradient(90deg, #333 1px, transparent 1px);
+  background-size: 20px 20px;
+}

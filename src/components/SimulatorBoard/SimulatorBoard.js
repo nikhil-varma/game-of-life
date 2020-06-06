@@ -52,6 +52,8 @@ class SimulatorBoard extends React.Component {
       [1, 0],
       [1, 1],
       [-1, -1],
+      [-1, 0],
+      [0, -1],
     ];
     for (let d = 0; d < neighborDirections.length; d++) {
       let newX = neighborDirections[d][0] + x;
@@ -71,7 +73,6 @@ class SimulatorBoard extends React.Component {
   };
 
   runSimulation = () => {
-    console.log("running");
     let nextFrame = this.spawnTiles(this.noSpawnCallback, false);
     const { grid } = this.state;
     const { rows, cols, gridTiles } = grid;
@@ -91,7 +92,6 @@ class SimulatorBoard extends React.Component {
         }
       }
     }
-    console.log(nextFrame);
     this.setState({ grid: { rows: 30, cols: 30, gridTiles: nextFrame } });
   };
 

@@ -5,3 +5,6 @@ To install dependencies execute:
 
 To run execute
 `yarn start`
+
+
+![Game of life simulation](https://im6.ezgif.com/tmp/ezgif-6-5f61398b4d1b.gif)

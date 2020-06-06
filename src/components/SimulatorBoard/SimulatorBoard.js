@@ -15,6 +15,7 @@ class SimulatorBoard extends React.Component {
   }
   componentDidMount() {
     this.spawnTiles(this.spawningFreq);
+    this.runningInterval = setInterval(this.runSimulation, 1000);
   }
 
   spawningFreq = () =>
@@ -31,6 +32,7 @@ class SimulatorBoard extends React.Component {
         gridTiles[i][j] = getSpawningValue();
       }
     }
+
     if (updateState) {
       this.setState(
         { grid: { gridTiles: gridTiles, rows: 30, cols: 30 } },
@@ -42,6 +44,8 @@ class SimulatorBoard extends React.Component {
   };
 
   getNeighbours = (gridTiles, x, y) => {
+    const { grid } = this.state;
+    const { rows, cols } = grid;
     let neighbors = 0;
     const neighborDirections = [
       [0, 1],
@@ -50,19 +54,24 @@ class SimulatorBoard extends React.Component {
       [-1, -1],
     ];
     for (let d = 0; d < neighborDirections.length; d++) {
-      let newX = neighborDirections[d][0];
-      let newY = neighborDirections[d][1];
-      if (newX > 0 && newY > 0 && gridTiles[newX][newY]) {
+      let newX = neighborDirections[d][0] + x;
+      let newY = neighborDirections[d][1] + y;
+      if (
+        newX >= 0 &&
+        newY >= 0 &&
+        x < rows &&
+        y < cols &&
+        gridTiles[newX] &&
+        gridTiles[newX][newY]
+      ) {
         neighbors++;
       }
-    }
-    if (neighbors) {
-      console.log(x, y, neighbors);
     }
     return neighbors;
   };
 
   runSimulation = () => {
+    console.log("running");
     let nextFrame = this.spawnTiles(this.noSpawnCallback, false);
     const { grid } = this.state;
     const { rows, cols, gridTiles } = grid;
@@ -82,6 +91,8 @@ class SimulatorBoard extends React.Component {
         }
       }
     }
+    console.log(nextFrame);
+    this.setState({ grid: { rows: 30, cols: 30, gridTiles: nextFrame } });
   };
 
   render() {
